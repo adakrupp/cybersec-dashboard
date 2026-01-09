@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - CyberSec Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold mb-2">Learning Resources</h1>
+        <p class="text-gray-400">Curated courses, certifications, and training materials for cybersecurity professionals</p>
+    </div>
+
+    <!-- Certifications Section -->
+    {% if certifications %}
+    <div class="mb-12">
+        <h2 class="text-2xl font-bold mb-4 flex items-center">
+            <i class="fas fa-certificate text-cyber-cyan mr-2"></i>
+            Popular Certifications
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for cert in certifications %}
+            <div class="glass-effect rounded-lg p-6 card-hover">
+                <h3 class="text-xl font-semibold mb-2">{{ cert.name }}</h3>
+                <p class="text-sm text-gray-400 mb-3">{{ cert.provider }}</p>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs px-3 py-1 bg-cyber-blue bg-opacity-20 text-blue-300 rounded-full">
+                        {{ cert.difficulty }}
+                    </span>
+                    <span class="text-sm text-gray-400">{{ cert.cost_range }}</span>
+                </div>
+                <p class="text-gray-400 text-sm mb-4">{{ cert.description|truncatewords:20 }}</p>
+                <a href="{{ cert.official_url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple text-sm">
+                    Learn More <i class="fas fa-external-link-alt ml-1"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Resources Section -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">All Resources</h2>
+
+        <!-- Filters -->
+        <div class="glass-effect rounded-lg p-4 mb-6">
+            <form method="get" class="flex flex-wrap gap-4">
+                <select name="category" class="bg-cyber-darker border border-gray-700 rounded px-4 py-2 text-white">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.slug }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <select name="difficulty" class="bg-cyber-darker border border-gray-700 rounded px-4 py-2 text-white">
+                    <option value="">All Levels</option>
+                    <option value="BEGINNER">Beginner</option>
+                    <option value="INTERMEDIATE">Intermediate</option>
+                    <option value="ADVANCED">Advanced</option>
+                </select>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="is_free" value="true" class="rounded">
+                    <span class="text-white">Free Only</span>
+                </label>
+                <button type="submit" class="bg-cyber-cyan hover:bg-opacity-80 px-6 py-2 rounded font-semibold">
+                    Filter
+                </button>
+            </form>
+        </div>
+
+        <!-- Resource List -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% if resources %}
+                {% for resource in resources %}
+                <div class="glass-effect rounded-lg p-6 card-hover">
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="text-xs px-3 py-1 bg-cyber-purple bg-opacity-20 text-purple-300 rounded-full">
+                            {{ resource.resource_type }}
+                        </span>
+                        {% if resource.is_free %}
+                        <span class="text-xs px-3 py-1 bg-green-500 bg-opacity-20 text-green-300 rounded-full">
+                            FREE
+                        </span>
+                        {% endif %}
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">{{ resource.title }}</h3>
+                    <p class="text-sm text-gray-400 mb-3">{{ resource.provider }}</p>
+                    <p class="text-gray-400 text-sm mb-4">{{ resource.description|truncatewords:20 }}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-500">{{ resource.difficulty }}</span>
+                        <a href="{{ resource.url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple">
+                            View Resource <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="glass-effect rounded-lg p-12 text-center col-span-2">
+                    <i class="fas fa-book text-6xl text-gray-600 mb-4"></i>
+                    <p class="text-gray-400 text-lg">No resources yet. Check back soon!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

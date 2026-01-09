@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CyberSec Dashboard{% endblock %}</title>
+
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-dark': '#0a0e27',
+                        'cyber-darker': '#060920',
+                        'cyber-blue': '#1e40af',
+                        'cyber-cyan': '#06b6d4',
+                        'cyber-purple': '#7c3aed',
+                        'cyber-accent': '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #060920 100%);
+        }
+
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #06b6d4;
+            transform: translateY(-2px);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full text-gray-100">
+    <!-- Navigation -->
+    <nav class="glass-effect sticky top-0 z-50 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <!-- Logo -->
+                    <a href="{% url 'core:home' %}" class="flex items-center space-x-2">
+                        <i class="fas fa-shield-alt text-cyber-cyan text-2xl"></i>
+                        <span class="text-xl font-bold text-white">CyberSec<span class="text-cyber-cyan">Hub</span></span>
+                    </a>
+
+                    <!-- Main Navigation -->
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="{% url 'news:list' %}" class="nav-link inline-flex items-center px-1 pt-1 text-sm font-medium">
+                            <i class="fas fa-newspaper mr-2"></i>
+                            News
+                        </a>
+                        <a href="{% url 'resources:list' %}" class="nav-link inline-flex items-center px-1 pt-1 text-sm font-medium">
+                            <i class="fas fa-graduation-cap mr-2"></i>
+                            Resources
+                        </a>
+                        <a href="{% url 'tools:list' %}" class="nav-link inline-flex items-center px-1 pt-1 text-sm font-medium">
+                            <i class="fas fa-tools mr-2"></i>
+                            Tools
+                        </a>
+                        <a href="{% url 'cve:search' %}" class="nav-link inline-flex items-center px-1 pt-1 text-sm font-medium">
+                            <i class="fas fa-bug mr-2"></i>
+                            CVE Tracker
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex items-center md:hidden">
+                    <button type="button" id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{% url 'news:list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                    <i class="fas fa-newspaper mr-2"></i>News
+                </a>
+                <a href="{% url 'resources:list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                    <i class="fas fa-graduation-cap mr-2"></i>Resources
+                </a>
+                <a href="{% url 'tools:list' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                    <i class="fas fa-tools mr-2"></i>Tools
+                </a>
+                <a href="{% url 'cve:search' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                    <i class="fas fa-bug mr-2"></i>CVE Tracker
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-effect mt-12 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-cyber-cyan">About</h3>
+                    <p class="text-gray-400 text-sm">
+                        CyberSecHub is a comprehensive dashboard for cybersecurity professionals and enthusiasts.
+                        Stay updated with the latest news, access learning resources, and track vulnerabilities.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-cyber-cyan">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'news:list' %}" class="text-gray-400 hover:text-cyber-cyan">Latest News</a></li>
+                        <li><a href="{% url 'resources:list' %}" class="text-gray-400 hover:text-cyber-cyan">Learning Resources</a></li>
+                        <li><a href="{% url 'tools:list' %}" class="text-gray-400 hover:text-cyber-cyan">Security Tools</a></li>
+                        <li><a href="{% url 'cve:search' %}" class="text-gray-400 hover:text-cyber-cyan">CVE Database</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-cyber-cyan">Connect</h3>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Open source project for the cybersecurity community.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-cyber-cyan">
+                            <i class="fab fa-github text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-cyber-cyan">
+                            <i class="fab fa-twitter text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-500 text-sm">
+                <p>&copy; 2026 CyberSecHub. Built for the community, by the community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // HTMX event listeners for loading indicators
+        document.body.addEventListener('htmx:beforeRequest', function(evt) {
+            document.body.style.cursor = 'wait';
+        });
+
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            document.body.style.cursor = 'default';
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

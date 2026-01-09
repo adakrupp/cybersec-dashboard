@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - CyberSec Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold mb-2">CVE Tracker</h1>
+        <p class="text-gray-400">Search and track Common Vulnerabilities and Exposures</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="glass-effect rounded-lg p-6 mb-8">
+        <form method="get" class="flex gap-4">
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search by CVE ID or keyword..."
+                class="flex-1 bg-cyber-darker border border-gray-700 rounded px-4 py-3 text-white focus:outline-none focus:border-cyber-cyan"
+            >
+            <button type="submit" class="bg-cyber-cyan hover:bg-opacity-80 px-8 py-3 rounded font-semibold">
+                <i class="fas fa-search mr-2"></i>Search
+            </button>
+        </form>
+
+        <!-- Popular Searches -->
+        {% if popular_searches %}
+        <div class="mt-4 pt-4 border-t border-gray-700">
+            <p class="text-sm text-gray-400 mb-2">Popular searches:</p>
+            <div class="flex flex-wrap gap-2">
+                {% for search in popular_searches %}
+                <a href="?q={{ search.query }}" class="text-xs px-3 py-1 bg-cyber-blue bg-opacity-20 text-blue-300 rounded hover:bg-opacity-30">
+                    {{ search.query }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Results -->
+    <div class="space-y-4">
+        {% if cves %}
+            <h2 class="text-2xl font-bold mb-4">
+                {% if query %}Search Results for "{{ query }}"{% else %}Recent CVEs{% endif %}
+            </h2>
+
+            {% for cve in cves %}
+            <div class="glass-effect rounded-lg p-6 card-hover">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <h3 class="text-xl font-semibold">{{ cve.cve_id }}</h3>
+                            {% if cve.severity %}
+                            <span class="text-xs px-3 py-1 rounded-full
+                                {% if cve.severity == 'CRITICAL' %}bg-red-500 bg-opacity-20 text-red-300
+                                {% elif cve.severity == 'HIGH' %}bg-orange-500 bg-opacity-20 text-orange-300
+                                {% elif cve.severity == 'MEDIUM' %}bg-yellow-500 bg-opacity-20 text-yellow-300
+                                {% else %}bg-green-500 bg-opacity-20 text-green-300
+                                {% endif %}">
+                                {{ cve.severity }}
+                            </span>
+                            {% endif %}
+                            {% if cve.cvss_score %}
+                            <span class="text-sm text-gray-400">CVSS: {{ cve.cvss_score }}</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="text-gray-400 text-sm mb-3">{{ cve.description|truncatewords:50 }}</p>
+
+                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                            <span><i class="far fa-calendar mr-1"></i>Published: {{ cve.published_date|date:"M d, Y" }}</span>
+                            <span><i class="far fa-clock mr-1"></i>Modified: {{ cve.last_modified|date:"M d, Y" }}</span>
+                        </div>
+
+                        <!-- Affected Products -->
+                        {% if cve.affected_products %}
+                        <div class="mt-3">
+                            <p class="text-xs text-gray-500 mb-1">Affected Products:</p>
+                            <div class="flex flex-wrap gap-2">
+                                {% for product in cve.affected_products|slice:":5" %}
+                                <span class="text-xs px-2 py-1 bg-cyber-darker rounded">{{ product }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <a href="https://nvd.nist.gov/vuln/detail/{{ cve.cve_id }}" target="_blank" class="ml-4 text-cyber-cyan hover:text-cyber-purple">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+
+                <!-- References -->
+                {% if cve.references %}
+                <div class="mt-4 pt-4 border-t border-gray-700">
+                    <p class="text-xs text-gray-500 mb-2">References:</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for ref in cve.references|slice:":3" %}
+                        <a href="{{ ref }}" target="_blank" class="text-xs text-cyber-cyan hover:text-cyber-purple">
+                            <i class="fas fa-link mr-1"></i>Reference {{ forloop.counter }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="glass-effect rounded-lg p-12 text-center">
+                <i class="fas fa-bug text-6xl text-gray-600 mb-4"></i>
+                {% if query %}
+                    <p class="text-gray-400 text-lg mb-2">No CVEs found for "{{ query }}"</p>
+                    <p class="text-gray-500 text-sm">Try searching by CVE ID (e.g., CVE-2024-1234) or keywords</p>
+                {% else %}
+                    <p class="text-gray-400 text-lg">No CVEs in the database yet</p>
+                    <p class="text-gray-500 text-sm">Search will query the NVD API in real-time</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Info Box -->
+    <div class="glass-effect rounded-lg p-6 mt-8">
+        <h3 class="text-lg font-semibold mb-3 flex items-center">
+            <i class="fas fa-info-circle text-cyber-cyan mr-2"></i>
+            About CVE Tracking
+        </h3>
+        <p class="text-gray-400 text-sm">
+            This tracker uses the National Vulnerability Database (NVD) to provide up-to-date information on security vulnerabilities.
+            Search by CVE ID, product name, or keywords to find relevant vulnerabilities and their details.
+        </p>
+    </div>
+</div>
+{% endblock %}

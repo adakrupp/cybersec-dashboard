@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - CyberSec Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold mb-2">Latest Cybersecurity News</h1>
+        <p class="text-gray-400">Stay updated with the latest security news from trusted sources</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="glass-effect rounded-lg p-4 mb-6">
+        <form method="get" class="flex flex-wrap gap-4">
+            <select name="source" class="bg-cyber-darker border border-gray-700 rounded px-4 py-2 text-white">
+                <option value="">All Sources</option>
+                {% for source in sources %}
+                <option value="{{ source.id }}">{{ source.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="bg-cyber-cyan hover:bg-opacity-80 px-6 py-2 rounded font-semibold">
+                Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- News Articles -->
+    <div class="space-y-4">
+        {% if articles %}
+            {% for article in articles %}
+            <div class="glass-effect rounded-lg p-6 card-hover">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-semibold mb-2">
+                            <a href="{{ article.url }}" target="_blank" class="hover:text-cyber-cyan">
+                                {{ article.title }}
+                            </a>
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-3">{{ article.summary|truncatewords:30 }}</p>
+                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                            <span><i class="fas fa-source mr-1"></i>{{ article.source.name }}</span>
+                            <span><i class="far fa-clock mr-1"></i>{{ article.published_date|date:"M d, Y" }}</span>
+                            {% if article.score > 0 %}
+                            <span><i class="fas fa-arrow-up mr-1"></i>{{ article.score }} points</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{{ article.url }}" target="_blank" class="ml-4 text-cyber-cyan hover:text-cyber-purple">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="glass-effect rounded-lg p-12 text-center">
+                <i class="fas fa-newspaper text-6xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400 text-lg">No news articles yet. Check back soon!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="mt-8 flex justify-center">
+        <nav class="flex space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="glass-effect px-4 py-2 rounded hover:bg-cyber-blue">Previous</a>
+            {% endif %}
+            <span class="glass-effect px-4 py-2 rounded">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="glass-effect px-4 py-2 rounded hover:bg-cyber-blue">Next</a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

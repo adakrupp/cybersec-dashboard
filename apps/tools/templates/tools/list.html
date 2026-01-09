@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - CyberSec Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold mb-2">Security Tools Directory</h1>
+        <p class="text-gray-400">Comprehensive catalog of essential cybersecurity tools for professionals and enthusiasts</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="glass-effect rounded-lg p-4 mb-6">
+        <form method="get" class="flex flex-wrap gap-4">
+            <select name="category" class="bg-cyber-darker border border-gray-700 rounded px-4 py-2 text-white">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category.slug }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" name="open_source" value="true" class="rounded">
+                <span class="text-white">Open Source Only</span>
+            </label>
+            <button type="submit" class="bg-cyber-cyan hover:bg-opacity-80 px-6 py-2 rounded font-semibold">
+                Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% if tools %}
+            {% for tool in tools %}
+            <div class="glass-effect rounded-lg p-6 card-hover">
+                <div class="flex items-start justify-between mb-3">
+                    <h3 class="text-xl font-semibold">{{ tool.name }}</h3>
+                    {% if tool.is_open_source %}
+                    <i class="fab fa-oss text-green-400" title="Open Source"></i>
+                    {% endif %}
+                </div>
+                <p class="text-sm text-gray-400 mb-3">{{ tool.category.name }}</p>
+                <p class="text-gray-400 text-sm mb-4">{{ tool.description|truncatewords:20 }}</p>
+
+                <!-- Platforms -->
+                {% if tool.platforms %}
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {% for platform in tool.platforms %}
+                    <span class="text-xs px-2 py-1 bg-cyber-blue bg-opacity-20 text-blue-300 rounded">
+                        {{ platform }}
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Difficulty -->
+                <div class="mb-4">
+                    <span class="text-xs px-3 py-1 bg-cyber-purple bg-opacity-20 text-purple-300 rounded-full">
+                        {{ tool.difficulty }}
+                    </span>
+                </div>
+
+                <!-- Links -->
+                <div class="flex items-center space-x-4">
+                    <a href="{{ tool.url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple text-sm">
+                        <i class="fas fa-globe mr-1"></i>Website
+                    </a>
+                    {% if tool.github_url %}
+                    <a href="{{ tool.github_url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple text-sm">
+                        <i class="fab fa-github mr-1"></i>GitHub
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Use Case -->
+                <div class="mt-4 pt-4 border-t border-gray-700">
+                    <p class="text-xs text-gray-500"><strong>Use Case:</strong> {{ tool.use_case|truncatewords:15 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="glass-effect rounded-lg p-12 text-center col-span-3">
+                <i class="fas fa-tools text-6xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400 text-lg">No tools yet. Check back soon!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="mt-8 flex justify-center">
+        <nav class="flex space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="glass-effect px-4 py-2 rounded hover:bg-cyber-blue">Previous</a>
+            {% endif %}
+            <span class="glass-effect px-4 py-2 rounded">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="glass-effect px-4 py-2 rounded hover:bg-cyber-blue">Next</a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

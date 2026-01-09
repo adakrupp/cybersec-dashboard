@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - CyberSec Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Hero Section -->
+    <div class="text-center mb-16">
+        <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-cyber-cyan to-cyber-purple bg-clip-text text-transparent">
+            Welcome to CyberSecHub
+        </h1>
+        <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+            Your comprehensive resource for cybersecurity news, learning materials, tools, and vulnerability tracking.
+            Stay informed, learn continuously, and advance your security career.
+        </p>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <!-- News Card -->
+        <a href="{% url 'news:list' %}" class="glass-effect rounded-lg p-6 card-hover">
+            <div class="flex items-center justify-center w-12 h-12 bg-blue-500 bg-opacity-20 rounded-lg mb-4">
+                <i class="fas fa-newspaper text-2xl text-blue-400"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Latest News</h3>
+            <p class="text-gray-400 text-sm">
+                Stay updated with the latest cybersecurity news from trusted sources and community feeds.
+            </p>
+        </a>
+
+        <!-- Resources Card -->
+        <a href="{% url 'resources:list' %}" class="glass-effect rounded-lg p-6 card-hover">
+            <div class="flex items-center justify-center w-12 h-12 bg-purple-500 bg-opacity-20 rounded-lg mb-4">
+                <i class="fas fa-graduation-cap text-2xl text-purple-400"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Learning Resources</h3>
+            <p class="text-gray-400 text-sm">
+                Access curated courses, certifications, tutorials, and training materials to advance your skills.
+            </p>
+        </a>
+
+        <!-- Tools Card -->
+        <a href="{% url 'tools:list' %}" class="glass-effect rounded-lg p-6 card-hover">
+            <div class="flex items-center justify-center w-12 h-12 bg-cyan-500 bg-opacity-20 rounded-lg mb-4">
+                <i class="fas fa-tools text-2xl text-cyan-400"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Security Tools</h3>
+            <p class="text-gray-400 text-sm">
+                Discover essential security tools for penetration testing, network analysis, and forensics.
+            </p>
+        </a>
+
+        <!-- CVE Card -->
+        <a href="{% url 'cve:search' %}" class="glass-effect rounded-lg p-6 card-hover">
+            <div class="flex items-center justify-center w-12 h-12 bg-red-500 bg-opacity-20 rounded-lg mb-4">
+                <i class="fas fa-bug text-2xl text-red-400"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">CVE Tracker</h3>
+            <p class="text-gray-400 text-sm">
+                Search and track Common Vulnerabilities and Exposures to stay ahead of security threats.
+            </p>
+        </a>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="glass-effect rounded-lg p-8 mb-12">
+        <h2 class="text-2xl font-bold mb-6 text-center">Why CyberSecHub?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="text-4xl font-bold text-cyber-cyan mb-2">100+</div>
+                <p class="text-gray-400">Curated Resources</p>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-bold text-cyber-cyan mb-2">24/7</div>
+                <p class="text-gray-400">News Updates</p>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-bold text-cyber-cyan mb-2">Free</div>
+                <p class="text-gray-400">Open Source</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="glass-effect rounded-lg p-8 text-center glow-effect">
+        <h2 class="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
+        <p class="text-gray-400 mb-6 max-w-2xl mx-auto">
+            Whether you're just starting out or looking to advance your career, CyberSecHub provides the resources and tools you need to succeed in cybersecurity.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'resources:list' %}" class="bg-cyber-cyan hover:bg-opacity-80 text-white font-semibold px-8 py-3 rounded-lg transition">
+                Explore Resources
+            </a>
+            <a href="{% url 'news:list' %}" class="bg-cyber-purple hover:bg-opacity-80 text-white font-semibold px-8 py-3 rounded-lg transition">
+                Read Latest News
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
