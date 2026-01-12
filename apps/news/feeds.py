@@ -1,11 +1,9 @@
 """
-News feed fetchers for RSS and Reddit sources
+News feed fetchers for RSS sources (including Reddit RSS feeds)
 """
 
 import feedparser
-import praw
 from datetime import datetime, timezone
-from django.conf import settings
 from django.utils import timezone as django_timezone
 from .models import NewsSource, NewsArticle
 import logging
@@ -66,84 +64,14 @@ class RSSFeedFetcher:
             return 0
 
 
-class RedditFetcher:
-    """Fetch news from Reddit subreddits"""
-
-    @staticmethod
-    def fetch_subreddit(source):
-        """Fetch top posts from a subreddit"""
-        try:
-            # Check if Reddit credentials are configured
-            if not settings.REDDIT_CLIENT_ID or not settings.REDDIT_CLIENT_SECRET:
-                logger.warning(f"Reddit API credentials not configured. Skipping {source.name}")
-                return 0
-
-            # Initialize Reddit client
-            reddit = praw.Reddit(
-                client_id=settings.REDDIT_CLIENT_ID,
-                client_secret=settings.REDDIT_CLIENT_SECRET,
-                user_agent=settings.REDDIT_USER_AGENT,
-            )
-
-            # Extract subreddit name from URL (e.g., r/netsec from https://reddit.com/r/netsec)
-            subreddit_name = source.url.split('/r/')[-1].rstrip('/')
-
-            subreddit = reddit.subreddit(subreddit_name)
-            articles_created = 0
-
-            # Fetch hot posts
-            for submission in subreddit.hot(limit=20):
-                # Skip stickied posts
-                if submission.stickied:
-                    continue
-
-                # Get the actual URL (might be reddit post or external link)
-                url = submission.url if not submission.is_self else f"https://reddit.com{submission.permalink}"
-
-                # Parse published date
-                published_date = datetime.fromtimestamp(submission.created_utc, tz=timezone.utc)
-
-                # Create or update article
-                article, created = NewsArticle.objects.get_or_create(
-                    url=url,
-                    defaults={
-                        'title': submission.title,
-                        'source': source,
-                        'published_date': published_date,
-                        'summary': submission.selftext[:500] if submission.is_self else '',
-                        'author': str(submission.author) if submission.author else '',
-                        'score': submission.score,
-                    }
-                )
-
-                # Update score if article exists
-                if not created:
-                    article.score = submission.score
-                    article.save()
-                else:
-                    articles_created += 1
-
-            logger.info(f"Fetched {articles_created} new posts from {source.name}")
-            return articles_created
-
-        except Exception as e:
-            logger.error(f"Error fetching Reddit posts from {source.name}: {str(e)}")
-            return 0
-
-
 def fetch_all_sources():
-    """Fetch news from all active sources"""
+    """Fetch news from all active RSS sources (including Reddit RSS feeds)"""
     total_articles = 0
 
-    # Fetch from RSS sources
+    # Fetch from all RSS sources (includes Reddit RSS feeds)
     rss_sources = NewsSource.objects.filter(is_active=True, source_type='RSS')
     for source in rss_sources:
         total_articles += RSSFeedFetcher.fetch_feed(source)
-
-    # Fetch from Reddit sources
-    reddit_sources = NewsSource.objects.filter(is_active=True, source_type='REDDIT')
-    for source in reddit_sources:
-        total_articles += RedditFetcher.fetch_subreddit(source)
 
     logger.info(f"Total new articles fetched: {total_articles}")
     return total_articles

@@ -16,7 +16,6 @@ django-htmx==1.17.3
 
 # News aggregation
 feedparser==6.0.11
-praw==7.7.1
 
 # HTTP requests
 requests==2.31.0

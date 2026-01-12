@@ -67,38 +67,76 @@
         </div>
 
         <!-- Resource List -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {% if resources %}
-                {% for resource in resources %}
-                <div class="glass-effect rounded-lg p-6 card-hover">
-                    <div class="flex items-start justify-between mb-3">
-                        <span class="text-xs px-3 py-1 bg-cyber-purple bg-opacity-20 text-purple-300 rounded-full">
-                            {{ resource.resource_type }}
-                        </span>
-                        {% if resource.is_free %}
-                        <span class="text-xs px-3 py-1 bg-green-500 bg-opacity-20 text-green-300 rounded-full">
-                            FREE
-                        </span>
-                        {% endif %}
+        {% if grouped_resources %}
+            <!-- Category Sections (No filters applied) -->
+            {% for category, category_resources in grouped_resources.items %}
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <i class="fas {{ category.icon }} text-cyber-cyan mr-2"></i>
+                    {{ category.name }} <span class="text-gray-500 text-lg ml-2">({{ category_resources.count }})</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for resource in category_resources %}
+                    <div class="glass-effect rounded-lg p-6 card-hover">
+                        <div class="flex items-start justify-between mb-3">
+                            <span class="text-xs px-3 py-1 bg-cyber-purple bg-opacity-20 text-purple-300 rounded-full">
+                                {{ resource.resource_type }}
+                            </span>
+                            {% if resource.is_free %}
+                            <span class="text-xs px-3 py-1 bg-green-500 bg-opacity-20 text-green-300 rounded-full">
+                                FREE
+                            </span>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">{{ resource.title }}</h3>
+                        <p class="text-sm text-gray-400 mb-3">{{ resource.provider }}</p>
+                        <p class="text-gray-400 text-sm mb-4">{{ resource.description|truncatewords:20 }}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">{{ resource.difficulty }}</span>
+                            <a href="{{ resource.url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple">
+                                View Resource <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">{{ resource.title }}</h3>
-                    <p class="text-sm text-gray-400 mb-3">{{ resource.provider }}</p>
-                    <p class="text-gray-400 text-sm mb-4">{{ resource.description|truncatewords:20 }}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-500">{{ resource.difficulty }}</span>
-                        <a href="{{ resource.url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple">
-                            View Resource <i class="fas fa-external-link-alt ml-1"></i>
-                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Filtered/Paginated View -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% if resources %}
+                    {% for resource in resources %}
+                    <div class="glass-effect rounded-lg p-6 card-hover">
+                        <div class="flex items-start justify-between mb-3">
+                            <span class="text-xs px-3 py-1 bg-cyber-purple bg-opacity-20 text-purple-300 rounded-full">
+                                {{ resource.resource_type }}
+                            </span>
+                            {% if resource.is_free %}
+                            <span class="text-xs px-3 py-1 bg-green-500 bg-opacity-20 text-green-300 rounded-full">
+                                FREE
+                            </span>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">{{ resource.title }}</h3>
+                        <p class="text-sm text-gray-400 mb-3">{{ resource.provider }}</p>
+                        <p class="text-gray-400 text-sm mb-4">{{ resource.description|truncatewords:20 }}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">{{ resource.difficulty }}</span>
+                            <a href="{{ resource.url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple">
+                                View Resource <i class="fas fa-external-link-alt ml-1"></i>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="glass-effect rounded-lg p-12 text-center col-span-2">
-                    <i class="fas fa-book text-6xl text-gray-600 mb-4"></i>
-                    <p class="text-gray-400 text-lg">No resources yet. Check back soon!</p>
-                </div>
-            {% endif %}
-        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="glass-effect rounded-lg p-12 text-center col-span-2">
+                        <i class="fas fa-book text-6xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400 text-lg">No resources match your filters.</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -117,11 +117,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-# Reddit API Configuration
-REDDIT_CLIENT_ID = config('REDDIT_CLIENT_ID', default='')
-REDDIT_CLIENT_SECRET = config('REDDIT_CLIENT_SECRET', default='')
-REDDIT_USER_AGENT = config('REDDIT_USER_AGENT', default='CybersecDashboard/1.0')
-
 # REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

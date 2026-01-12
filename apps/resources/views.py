@@ -30,4 +30,17 @@ class ResourceListView(ListView):
         context['categories'] = Category.objects.all()
         context['certifications'] = Certification.objects.all()
         context['page_title'] = 'Learning Resources'
+
+        # Group resources by category for organized display
+        # Only group if no filters are applied (category, difficulty, free-only)
+        if not any([self.request.GET.get('category'), self.request.GET.get('difficulty'), self.request.GET.get('is_free')]):
+            grouped_resources = {}
+            for category in Category.objects.all().order_by('name'):
+                resources = Resource.objects.filter(category=category).order_by('title')
+                if resources.exists():
+                    grouped_resources[category] = resources
+            context['grouped_resources'] = grouped_resources
+        else:
+            context['grouped_resources'] = None
+
         return context
