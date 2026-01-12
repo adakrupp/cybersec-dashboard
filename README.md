@@ -47,27 +47,13 @@ A comprehensive, self-hosted cybersecurity dashboard built with Django and HTMX.
 - **Database**: PostgreSQL (production) / SQLite (development)
 - **Task Queue**: Celery + Redis (background news fetching)
 - **Deployment**: Docker + Docker Compose
-- **APIs**: RSS feeds (feedparser), Reddit API (PRAW), NVD CVE API
+- **APIs**: RSS feeds (feedparser), NVD CVE API
 
 ## Quick Start with Docker (Recommended)
 
 ### Prerequisites
 
 - Docker and Docker Compose installed
-- Reddit API credentials (free - see below)
-
-### Reddit API Setup (Free)
-
-1. Go to https://www.reddit.com/prefs/apps
-2. Click "Create App" or "Create Another App"
-3. Fill in:
-   - Name: "CyberSecHub" (or any name)
-   - App type: **script**
-   - Description: (optional)
-   - About URL: (optional)
-   - Redirect URI: http://localhost:8000 (required but not used)
-4. Click "Create app"
-5. Note your `client_id` (under the app name) and `client_secret`
 
 ### Installation
 
@@ -94,9 +80,11 @@ A comprehensive, self-hosted cybersecurity dashboard built with Django and HTMX.
    Edit `.env` and update:
    ```env
    SECRET_KEY=your-secret-key-here-generate-a-random-one
-   REDDIT_CLIENT_ID=your-reddit-client-id
-   REDDIT_CLIENT_SECRET=your-reddit-client-secret
-   REDDIT_USER_AGENT=CybersecDashboard/1.0
+   ```
+
+   Generate a secure secret key:
+   ```bash
+   python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
    ```
 
 4. **Access the dashboard**
@@ -234,9 +222,6 @@ cybersec-dashboard/
 | `ALLOWED_HOSTS` | Comma-separated allowed hosts | `localhost,127.0.0.1` |
 | `DATABASE_URL` | PostgreSQL connection string | SQLite (development) |
 | `CELERY_BROKER_URL` | Redis URL for Celery | `redis://redis:6379/0` |
-| `REDDIT_CLIENT_ID` | Reddit app client ID | (required for news) |
-| `REDDIT_CLIENT_SECRET` | Reddit app secret | (required for news) |
-| `REDDIT_USER_AGENT` | Reddit user agent | `CybersecDashboard/1.0` |
 
 ### Adding News Sources
 
@@ -262,40 +247,21 @@ Background tasks are configured in `config/settings/base.py`:
   }
   ```
 
-## Publishing to Docker Hub
+## Docker Hub
 
-To publish your Docker image to Docker Hub:
+Pre-built Docker images are available on Docker Hub:
 
-```bash
-# Login to Docker Hub
-docker login
-
-# Build and tag the image
-docker build -t yourusername/cybersec-dashboard:latest .
-
-# Push to Docker Hub
-docker push yourusername/cybersec-dashboard:latest
-
-# Tag a specific version
-docker tag yourusername/cybersec-dashboard:latest yourusername/cybersec-dashboard:v1.0.0
-docker push yourusername/cybersec-dashboard:v1.0.0
-```
-
-**Security Note:** The Docker image contains NO secrets. Users must provide their own `.env` file.
-
-### Users can then run your published image:
+**Image:** [adakrupp/cybersec-dashboard](https://hub.docker.com/r/adakrupp/cybersec-dashboard)
 
 ```bash
-# Pull your image
-docker pull yourusername/cybersec-dashboard:latest
+# Pull the latest image
+docker pull adakrupp/cybersec-dashboard:latest
 
-# Create .env file
-cp .env.example .env
-# Edit .env with credentials
-
-# Run with docker-compose pointing to your image
-docker-compose up -d
+# Or pull a specific version
+docker pull adakrupp/cybersec-dashboard:v1.0.0
 ```
+
+To use the pre-built image, update your `docker-compose.yml` to use `image: adakrupp/cybersec-dashboard:latest` instead of building locally.
 
 ## Deployment
 
@@ -402,14 +368,15 @@ Edit `scripts/seed_data.py` and add to `seed_tool_categories()`.
 
 ### News Not Fetching
 
-1. Check Reddit API credentials in `.env`
-2. View Celery logs: `docker-compose logs celery`
+1. View Celery logs: `docker-compose logs celery`
+2. Check that Celery beat is running: `docker-compose logs celery-beat`
 3. Manually trigger fetch:
    ```bash
    docker-compose exec web python manage.py shell
    >>> from apps.news.tasks import fetch_all_news
    >>> fetch_all_news()
    ```
+4. Verify news sources are active in admin panel: http://localhost:8000/admin
 
 ### Database Issues
 
@@ -455,7 +422,7 @@ This project is open source and available under the MIT License.
 ## Acknowledgments
 
 - **News Sources**: Krebs on Security, BleepingComputer, The Hacker News, Dark Reading, r/netsec, r/cybersecurity
-- **APIs**: Reddit API (PRAW), National Vulnerability Database (NVD)
+- **APIs**: National Vulnerability Database (NVD)
 - **Framework**: Django, HTMX, TailwindCSS
 - **Icons**: Font Awesome
 
@@ -494,6 +461,6 @@ If you encounter any issues or have questions:
 
 ---
 
-**Built with  for the cybersecurity community**
+**Built for the cybersecurity community**
 
 *Perfect for portfolios, learning, and staying informed in the ever-evolving world of cybersecurity.*
