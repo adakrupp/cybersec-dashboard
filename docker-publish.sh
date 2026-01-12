@@ -7,7 +7,7 @@ set -e  # Exit on error
 
 DOCKER_USERNAME="adakrupp"
 IMAGE_NAME="cybersec-dashboard"
-VERSION="v1.0.0"
+VERSION="v2.0.0"
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════════╗"
