@@ -70,6 +70,11 @@
                         <i class="fab fa-github mr-1"></i>GitHub
                     </a>
                     {% endif %}
+                    {% if tool.tutorial_url %}
+                    <a href="{{ tool.tutorial_url }}" target="_blank" class="text-cyber-cyan hover:text-cyber-purple text-sm">
+                        <i class="fas fa-book mr-1"></i>Tutorial
+                    </a>
+                    {% endif %}
                 </div>
 
                 <!-- Use Case -->

@@ -30,6 +30,7 @@ class Tool(models.Model):
     use_case = models.TextField(help_text="When and how to use this tool")
     url = models.URLField()
     github_url = models.URLField(blank=True)
+    tutorial_url = models.URLField(blank=True, help_text="Link to tutorial or usage guide")
     is_open_source = models.BooleanField(default=True)
     platforms = models.JSONField(default=list, help_text="List of supported platforms")
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES)
