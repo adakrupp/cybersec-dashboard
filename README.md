@@ -11,9 +11,10 @@ A comprehensive, self-hosted cybersecurity dashboard built with Django and HTMX.
 
 ### 📰 News Aggregator
 - Automatically fetch and display the latest cybersecurity news
-- Multiple sources:
-  - RSS feeds (Krebs on Security, BleepingComputer, The Hacker News, Dark Reading)
-  - Reddit (r/netsec, r/cybersecurity)
+- Multiple RSS feed sources:
+  - Krebs on Security, BleepingComputer, The Hacker News
+  - Dark Reading, SecurityWeek, Naked Security by Sophos
+  - Graham Cluley, Threatpost
 - Background updates every 30 minutes via Celery
 - Filter by source and search functionality
 
@@ -26,11 +27,20 @@ A comprehensive, self-hosted cybersecurity dashboard built with Django and HTMX.
 - Filter by category, difficulty, and price
 
 ### 🛠️ Security Tools Directory
-- Comprehensive catalog of essential security tools
-- Categories: Network Analysis, Pentesting, Password Cracking, Web Security, Forensics, OSINT
+- Comprehensive catalog of 84 essential security tools
+- 9 Categories: Network Analysis, Pentesting, Password Cracking, Web Security, Forensics, OSINT, Reverse Engineering, Vulnerability Scanning, Online Security Analysis
 - Includes: Wireshark, Nmap, Metasploit, Burp Suite, OWASP ZAP, John the Ripper, Hashcat, and more
+- Online analysis tools: VirusTotal, Cisco Talos Intelligence, URLhaus, Hybrid Analysis, AbuseIPDB, Have I Been Pwned, SSL Labs, and more
 - Filter by category, platform, and open-source status
 - Links to official sites and GitHub repositories
+
+### 🗺️ Learning Paths
+- Interactive skill trees for structured cybersecurity learning
+- Prerequisite tracking shows learning dependencies
+- Curated learning resources for each skill (courses, books, tutorials, documentation)
+- Links to related tools and certifications
+- Available paths: Web Security Fundamentals (more coming soon)
+- Difficulty levels: Beginner, Intermediate, Advanced
 
 ### 🐛 CVE Tracker
 - Search and track Common Vulnerabilities and Exposures
@@ -48,6 +58,35 @@ A comprehensive, self-hosted cybersecurity dashboard built with Django and HTMX.
 - **Task Queue**: Celery + Redis (background news fetching)
 - **Deployment**: Docker + Docker Compose
 - **APIs**: RSS feeds (feedparser), NVD CVE API
+
+## System Requirements
+
+### Minimum Requirements (Development/Personal Use)
+- **RAM**: 2 GB (1 GB for containers + 1 GB for OS)
+- **Disk Space**: 2 GB free space
+- **CPU**: 1-2 cores (any modern CPU)
+- **OS**: Linux, macOS, or Windows with Docker support
+
+### Recommended for Production
+- **RAM**: 4-8 GB
+- **Disk Space**: 10-20 GB (for logs, database growth, backups)
+- **CPU**: 2-4 cores
+- **OS**: Linux (Ubuntu 20.04+ or Debian 11+)
+
+### Current Resource Usage
+The Docker stack consists of 5 containers with the following footprint:
+- **PostgreSQL Database**: ~28 MB RAM, ~50 MB disk
+- **Redis Cache**: ~10 MB RAM
+- **Django Web Server** (3 Gunicorn workers): ~135 MB RAM
+- **Celery Worker**: ~564 MB RAM (background tasks)
+- **Celery Beat**: ~63 MB RAM (task scheduler)
+- **Total**: ~800 MB RAM, ~600-800 MB disk space
+
+**Perfect for**:
+- Any modern laptop or desktop
+- Minimal VPS ($5-10/month tier from DigitalOcean, Linode, Vultr, etc.)
+- Cloud platforms (Railway, Render, DigitalOcean App Platform)
+- Raspberry Pi 4 (4GB model)
 
 ## Quick Start with Docker (Recommended)
 
@@ -191,7 +230,8 @@ cybersec-dashboard/
 │   ├── news/           # News aggregator
 │   ├── resources/      # Learning resources
 │   ├── tools/          # Security tools directory
-│   └── cve/            # CVE tracker
+│   ├── cve/            # CVE tracker
+│   └── learning_paths/ # Interactive learning paths/skill trees
 ├── config/             # Django settings
 │   ├── settings/
 │   │   ├── base.py
@@ -421,7 +461,7 @@ This project is open source and available under the MIT License.
 
 ## Acknowledgments
 
-- **News Sources**: Krebs on Security, BleepingComputer, The Hacker News, Dark Reading, r/netsec, r/cybersecurity
+- **News Sources**: Krebs on Security, BleepingComputer, The Hacker News, Dark Reading, SecurityWeek, Naked Security by Sophos, Graham Cluley, Threatpost
 - **APIs**: National Vulnerability Database (NVD)
 - **Framework**: Django, HTMX, TailwindCSS
 - **Icons**: Font Awesome
@@ -437,20 +477,24 @@ If you encounter any issues or have questions:
 ## Roadmap
 
 ### Phase 1 (Completed)
-- [x] News aggregator (RSS + Reddit)
-- [x] Learning resources catalog
-- [x] Security tools directory
+- [x] News aggregator (RSS feeds)
+- [x] Learning resources catalog (45 resources)
+- [x] Security tools directory (84 tools)
+- [x] Online security analysis tools (VirusTotal, Cisco Talos, etc.)
 - [x] CVE tracker
+- [x] Interactive learning paths with skill trees
 - [x] Docker deployment
 - [x] Background task scheduling
 
 ### Phase 2 (Future)
 - [ ] User authentication and profiles
 - [ ] Bookmark/save functionality
+- [ ] Progress tracking for learning paths
 - [ ] Email digest subscriptions
 - [ ] Advanced CVE filtering
 - [ ] Threat intelligence integration
 - [ ] Security podcasts feed
+- [ ] More learning paths (Network Security, Pentesting, Blue Team)
 
 ### Phase 3 (Future)
 - [ ] Mobile-responsive PWA
@@ -458,6 +502,7 @@ If you encounter any issues or have questions:
 - [ ] Custom RSS feed builder
 - [ ] Community contributions (user-submitted resources)
 - [ ] Job board integration
+- [ ] Cybersecurity events calendar
 
 ---
 
