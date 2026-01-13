@@ -49,16 +49,28 @@ def seed_news_sources():
             'is_active': True,
         },
         {
-            'name': 'r/netsec',
+            'name': 'SecurityWeek',
             'source_type': 'RSS',
-            'url': 'https://www.reddit.com/r/netsec/.rss',
-            'is_active': True,  # Using Reddit's public RSS feed (no API key needed)
+            'url': 'https://www.securityweek.com/feed/',
+            'is_active': True,
         },
         {
-            'name': 'r/cybersecurity',
+            'name': 'Naked Security by Sophos',
             'source_type': 'RSS',
-            'url': 'https://www.reddit.com/r/cybersecurity/.rss',
-            'is_active': True,  # Using Reddit's public RSS feed (no API key needed)
+            'url': 'https://nakedsecurity.sophos.com/feed/',
+            'is_active': True,
+        },
+        {
+            'name': 'Graham Cluley',
+            'source_type': 'RSS',
+            'url': 'https://grahamcluley.com/feed/',
+            'is_active': True,
+        },
+        {
+            'name': 'Threatpost',
+            'source_type': 'RSS',
+            'url': 'https://threatpost.com/feed/',
+            'is_active': True,
         },
     ]
 
