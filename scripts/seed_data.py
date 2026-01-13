@@ -16,6 +16,7 @@ django.setup()
 from apps.resources.models import Category, Certification, Resource
 from apps.tools.models import ToolCategory, Tool
 from apps.news.models import NewsSource
+from apps.learning_paths.models import LearningPath, SkillNode
 
 
 def seed_news_sources():
@@ -1751,6 +1752,539 @@ def seed_tools():
     print(f"✓ Tools seeded ({Tool.objects.count()} total)\n")
 
 
+def seed_learning_paths():
+    """Create learning paths and skill nodes"""
+    print("Seeding learning paths...")
+
+    # Create "Web Security Fundamentals" Learning Path
+    web_path, created = LearningPath.objects.get_or_create(
+        slug='web-security-fundamentals',
+        defaults={
+            'name': 'Web Security Fundamentals',
+            'description': 'Master the fundamentals of web application security from basic concepts to advanced penetration testing techniques.',
+            'icon': 'fas fa-shield-halved',
+            'difficulty': 'INTERMEDIATE',
+            'estimated_hours': 220,
+            'is_published': True,
+            'order': 1,
+        }
+    )
+    if created:
+        print(f"  Created: {web_path.name}")
+
+    # Create skill nodes for Web Security path
+    skill_nodes_data = [
+        # Level 1: Foundations
+        {
+            'learning_path': web_path,
+            'slug': 'linux-basics',
+            'title': 'Linux Basics',
+            'description': 'Learn Linux command line, file systems, permissions, and basic system administration.',
+            'difficulty': 'BEGINNER',
+            'estimated_hours': 20,
+            'order': 1,
+            'prerequisites': [],
+            'resources': ['Professor Messer Security+'],
+            'tools': ['Wireshark', 'Nmap'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'Linux Journey',
+                    'url': 'https://linuxjourney.com/',
+                    'type': 'course',
+                    'description': 'Free interactive guide to learning Linux from beginner to advanced'
+                },
+                {
+                    'title': 'Linux Command Line Basics (Udacity)',
+                    'url': 'https://www.udacity.com/course/linux-command-line-basics--ud595',
+                    'type': 'course',
+                    'description': 'Free course covering essential Linux command line skills'
+                },
+                {
+                    'title': 'The Linux Command Handbook',
+                    'url': 'https://www.freecodecamp.org/news/the-linux-commands-handbook/',
+                    'type': 'article',
+                    'description': 'Comprehensive reference guide to Linux commands'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'networking-fundamentals',
+            'title': 'Networking Fundamentals',
+            'description': 'Understand TCP/IP, DNS, HTTP, and network protocols essential for security testing.',
+            'difficulty': 'BEGINNER',
+            'estimated_hours': 25,
+            'order': 2,
+            'prerequisites': [],
+            'resources': ['Professor Messer Security+', 'NIST Cybersecurity Framework'],
+            'tools': ['Wireshark', 'tcpdump', 'Nmap'],
+            'certifications': ['CompTIA Security+'],
+            'learning_resources': [
+                {
+                    'title': 'Networking Fundamentals (Cisco)',
+                    'url': 'https://www.netacad.com/courses/networking/networking-basics',
+                    'type': 'course',
+                    'description': 'Free Cisco course covering networking fundamentals'
+                },
+                {
+                    'title': 'Computer Networking: A Top-Down Approach',
+                    'url': 'https://gaia.cs.umass.edu/kurose_ross/online_lectures.htm',
+                    'type': 'video',
+                    'description': 'Free video lectures from the popular networking textbook'
+                },
+                {
+                    'title': 'TCP/IP Guide',
+                    'url': 'http://www.tcpipguide.com/',
+                    'type': 'documentation',
+                    'description': 'Comprehensive online reference for TCP/IP protocols'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'programming-python',
+            'title': 'Programming Basics (Python)',
+            'description': 'Learn Python programming for security automation and scripting.',
+            'difficulty': 'BEGINNER',
+            'estimated_hours': 30,
+            'order': 3,
+            'prerequisites': [],
+            'resources': ['Cybrary'],
+            'tools': [],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'Python for Everybody (Coursera)',
+                    'url': 'https://www.py4e.com/',
+                    'type': 'course',
+                    'description': 'Free Python course with videos, exercises, and examples'
+                },
+                {
+                    'title': 'Automate the Boring Stuff with Python',
+                    'url': 'https://automatetheboringstuff.com/',
+                    'type': 'book',
+                    'description': 'Free online book teaching Python through practical automation tasks'
+                },
+                {
+                    'title': 'Python Tutorial (Official)',
+                    'url': 'https://docs.python.org/3/tutorial/',
+                    'type': 'documentation',
+                    'description': 'Official Python tutorial from python.org'
+                }
+            ]
+        },
+        # Level 2: Web Technologies
+        {
+            'learning_path': web_path,
+            'slug': 'http-https-protocol',
+            'title': 'HTTP/HTTPS Protocol',
+            'description': 'Deep dive into HTTP methods, headers, cookies, and HTTPS encryption.',
+            'difficulty': 'BEGINNER',
+            'estimated_hours': 15,
+            'order': 4,
+            'prerequisites': ['networking-fundamentals'],
+            'resources': ['OWASP Top 10', 'OWASP Cheat Sheet Series'],
+            'tools': ['Burp Suite', 'OWASP ZAP'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'HTTP Protocol Fundamentals',
+                    'url': 'https://developer.mozilla.org/en-US/docs/Web/HTTP',
+                    'type': 'documentation',
+                    'description': 'MDN Web Docs comprehensive HTTP guide'
+                },
+                {
+                    'title': 'HTTP: The Definitive Guide',
+                    'url': 'https://www.oreilly.com/library/view/http-the-definitive/1565925092/',
+                    'type': 'book',
+                    'description': 'Comprehensive book covering HTTP in detail'
+                },
+                {
+                    'title': 'How HTTPS Works (Comic)',
+                    'url': 'https://howhttps.works/',
+                    'type': 'article',
+                    'description': 'Fun illustrated guide to understanding HTTPS'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'html-css-javascript',
+            'title': 'HTML/CSS/JavaScript',
+            'description': 'Learn web development fundamentals to understand client-side vulnerabilities.',
+            'difficulty': 'BEGINNER',
+            'estimated_hours': 20,
+            'order': 5,
+            'prerequisites': ['programming-python'],
+            'resources': [],
+            'tools': [],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'freeCodeCamp Responsive Web Design',
+                    'url': 'https://www.freecodecamp.org/learn/2022/responsive-web-design/',
+                    'type': 'course',
+                    'description': 'Free interactive HTML/CSS course with projects'
+                },
+                {
+                    'title': 'JavaScript.info - The Modern JavaScript Tutorial',
+                    'url': 'https://javascript.info/',
+                    'type': 'tutorial',
+                    'description': 'Comprehensive modern JavaScript guide from basics to advanced'
+                },
+                {
+                    'title': 'MDN Web Development Tutorials',
+                    'url': 'https://developer.mozilla.org/en-US/docs/Learn',
+                    'type': 'documentation',
+                    'description': 'Mozilla Developer Network web development learning resources'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'sql-databases',
+            'title': 'SQL Databases',
+            'description': 'Understand database fundamentals and SQL queries for injection testing.',
+            'difficulty': 'BEGINNER',
+            'estimated_hours': 15,
+            'order': 6,
+            'prerequisites': ['programming-python'],
+            'resources': [],
+            'tools': ['SQLMap'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'SQL Tutorial (W3Schools)',
+                    'url': 'https://www.w3schools.com/sql/',
+                    'type': 'tutorial',
+                    'description': 'Interactive SQL tutorial with examples and exercises'
+                },
+                {
+                    'title': 'SQLBolt - Learn SQL Interactively',
+                    'url': 'https://sqlbolt.com/',
+                    'type': 'tutorial',
+                    'description': 'Interactive lessons and exercises for learning SQL'
+                },
+                {
+                    'title': 'Database Design Basics',
+                    'url': 'https://support.microsoft.com/en-us/office/database-design-basics-eb2159cf-1e30-401a-8084-bd4f9c9ca1f5',
+                    'type': 'article',
+                    'description': 'Microsoft guide to database fundamentals'
+                }
+            ]
+        },
+        # Level 3: Security Concepts
+        {
+            'learning_path': web_path,
+            'slug': 'owasp-top-10',
+            'title': 'OWASP Top 10',
+            'description': 'Master the most critical web application security risks.',
+            'difficulty': 'INTERMEDIATE',
+            'estimated_hours': 20,
+            'order': 7,
+            'prerequisites': ['http-https-protocol', 'html-css-javascript', 'sql-databases'],
+            'resources': ['OWASP Top 10', 'OWASP Testing Guide', 'PortSwigger Web Security Academy'],
+            'tools': ['Burp Suite', 'OWASP ZAP'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'OWASP Top 10 2021',
+                    'url': 'https://owasp.org/www-project-top-ten/',
+                    'type': 'documentation',
+                    'description': 'Official OWASP Top 10 documentation with examples'
+                },
+                {
+                    'title': 'PortSwigger Web Security Academy',
+                    'url': 'https://portswigger.net/web-security',
+                    'type': 'course',
+                    'description': 'Free online training covering all OWASP Top 10 vulnerabilities with labs'
+                },
+                {
+                    'title': 'OWASP Top 10 Learning Path (TryHackMe)',
+                    'url': 'https://tryhackme.com/path/outline/owasp',
+                    'type': 'course',
+                    'description': 'Hands-on learning path with practical exercises'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'burp-suite-basics',
+            'title': 'Burp Suite Basics',
+            'description': 'Learn to use Burp Suite for intercepting and manipulating HTTP traffic.',
+            'difficulty': 'INTERMEDIATE',
+            'estimated_hours': 15,
+            'order': 8,
+            'prerequisites': ['http-https-protocol', 'owasp-top-10'],
+            'resources': ['PortSwigger Web Security Academy'],
+            'tools': ['Burp Suite'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'Burp Suite Official Documentation',
+                    'url': 'https://portswigger.net/burp/documentation',
+                    'type': 'documentation',
+                    'description': 'Comprehensive official documentation for Burp Suite'
+                },
+                {
+                    'title': 'Burp Suite Tutorial for Beginners',
+                    'url': 'https://www.youtube.com/watch?v=G3hpAeoZ4ek',
+                    'type': 'video',
+                    'description': 'Video tutorial covering Burp Suite basics'
+                },
+                {
+                    'title': 'Burp Suite Certified Practitioner',
+                    'url': 'https://portswigger.net/web-security/certification',
+                    'type': 'course',
+                    'description': 'Free training materials for Burp Suite certification'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'xss-csrf',
+            'title': 'XSS & CSRF Attacks',
+            'description': 'Understand and exploit cross-site scripting and cross-site request forgery vulnerabilities.',
+            'difficulty': 'INTERMEDIATE',
+            'estimated_hours': 15,
+            'order': 9,
+            'prerequisites': ['owasp-top-10', 'html-css-javascript'],
+            'resources': ['OWASP Top 10', 'PortSwigger Web Security Academy'],
+            'tools': ['Burp Suite', 'OWASP ZAP'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'XSS Tutorial (PortSwigger)',
+                    'url': 'https://portswigger.net/web-security/cross-site-scripting',
+                    'type': 'tutorial',
+                    'description': 'Comprehensive guide to XSS attacks with interactive labs'
+                },
+                {
+                    'title': 'CSRF Tutorial (PortSwigger)',
+                    'url': 'https://portswigger.net/web-security/csrf',
+                    'type': 'tutorial',
+                    'description': 'Complete guide to CSRF vulnerabilities and exploitation'
+                },
+                {
+                    'title': 'XSS Game by Google',
+                    'url': 'https://xss-game.appspot.com/',
+                    'type': 'course',
+                    'description': 'Hands-on XSS challenges from Google'
+                }
+            ]
+        },
+        # Level 4: Advanced Attacks
+        {
+            'learning_path': web_path,
+            'slug': 'sql-injection',
+            'title': 'SQL Injection',
+            'description': 'Master SQL injection techniques including blind SQLi and advanced exploitation.',
+            'difficulty': 'INTERMEDIATE',
+            'estimated_hours': 20,
+            'order': 10,
+            'prerequisites': ['sql-databases', 'owasp-top-10'],
+            'resources': ['OWASP Top 10', 'PortSwigger Web Security Academy'],
+            'tools': ['SQLMap', 'Burp Suite'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'SQL Injection (PortSwigger)',
+                    'url': 'https://portswigger.net/web-security/sql-injection',
+                    'type': 'tutorial',
+                    'description': 'Complete SQL injection guide with labs from basic to advanced'
+                },
+                {
+                    'title': 'SQL Injection Cheat Sheet',
+                    'url': 'https://portswigger.net/web-security/sql-injection/cheat-sheet',
+                    'type': 'documentation',
+                    'description': 'Comprehensive SQLi payloads and techniques reference'
+                },
+                {
+                    'title': 'SQLi Labs by Audi-1',
+                    'url': 'https://github.com/Audi-1/sqli-labs',
+                    'type': 'tutorial',
+                    'description': 'Hands-on SQL injection practice environment'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'auth-session-management',
+            'title': 'Authentication & Session Management',
+            'description': 'Learn to identify and exploit authentication and session management flaws.',
+            'difficulty': 'INTERMEDIATE',
+            'estimated_hours': 15,
+            'order': 11,
+            'prerequisites': ['http-https-protocol'],
+            'resources': ['OWASP Top 10'],
+            'tools': ['Burp Suite', 'John the Ripper'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'Authentication Vulnerabilities (PortSwigger)',
+                    'url': 'https://portswigger.net/web-security/authentication',
+                    'type': 'tutorial',
+                    'description': 'Guide to authentication bypass and exploitation'
+                },
+                {
+                    'title': 'Session Management Cheat Sheet (OWASP)',
+                    'url': 'https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html',
+                    'type': 'documentation',
+                    'description': 'Best practices and attack vectors for sessions'
+                },
+                {
+                    'title': 'JWT Security Best Practices',
+                    'url': 'https://curity.io/resources/learn/jwt-best-practices/',
+                    'type': 'article',
+                    'description': 'Understanding JWT vulnerabilities and secure implementation'
+                }
+            ]
+        },
+        {
+            'learning_path': web_path,
+            'slug': 'api-security',
+            'title': 'API Security',
+            'description': 'Test REST and GraphQL APIs for security vulnerabilities.',
+            'difficulty': 'INTERMEDIATE',
+            'estimated_hours': 15,
+            'order': 12,
+            'prerequisites': ['http-https-protocol', 'programming-python'],
+            'resources': ['OWASP API Security Top 10'],
+            'tools': ['Burp Suite', 'Postman'],
+            'certifications': [],
+            'learning_resources': [
+                {
+                    'title': 'OWASP API Security Top 10',
+                    'url': 'https://owasp.org/www-project-api-security/',
+                    'type': 'documentation',
+                    'description': 'Official OWASP API security risks documentation'
+                },
+                {
+                    'title': 'API Security Testing (PortSwigger)',
+                    'url': 'https://portswigger.net/web-security/api-testing',
+                    'type': 'tutorial',
+                    'description': 'Practical guide to API security testing'
+                },
+                {
+                    'title': 'REST API Security Essentials',
+                    'url': 'https://restfulapi.net/security-essentials/',
+                    'type': 'article',
+                    'description': 'Essential REST API security concepts'
+                }
+            ]
+        },
+        # Level 5: Mastery
+        {
+            'learning_path': web_path,
+            'slug': 'web-penetration-testing',
+            'title': 'Web Penetration Testing',
+            'description': 'Comprehensive web application penetration testing methodology and reporting.',
+            'difficulty': 'ADVANCED',
+            'estimated_hours': 40,
+            'order': 13,
+            'prerequisites': ['owasp-top-10', 'burp-suite-basics', 'xss-csrf', 'sql-injection', 'auth-session-management', 'api-security'],
+            'resources': ['OWASP Testing Guide'],
+            'tools': ['Burp Suite', 'OWASP ZAP', 'SQLMap', 'Nikto'],
+            'certifications': ['Certified Ethical Hacker (CEH)', 'Offensive Security Certified Professional (OSCP)'],
+            'learning_resources': [
+                {
+                    'title': 'OWASP Web Security Testing Guide',
+                    'url': 'https://owasp.org/www-project-web-security-testing-guide/',
+                    'type': 'documentation',
+                    'description': 'Comprehensive methodology for web application security testing'
+                },
+                {
+                    'title': 'The Web Application Hackers Handbook',
+                    'url': 'https://www.amazon.com/Web-Application-Hackers-Handbook-Exploiting/dp/1118026470',
+                    'type': 'book',
+                    'description': 'Classic book on web application security testing (paid)'
+                },
+                {
+                    'title': 'PentesterLab Web Challenges',
+                    'url': 'https://pentesterlab.com/',
+                    'type': 'course',
+                    'description': 'Hands-on web pentesting exercises and vulnerable applications'
+                },
+                {
+                    'title': 'HackTheBox Web Challenges',
+                    'url': 'https://www.hackthebox.com/',
+                    'type': 'course',
+                    'description': 'Real-world web application pentesting challenges'
+                }
+            ]
+        },
+    ]
+
+    # Create skill nodes
+    node_objects = {}  # Store created nodes for linking prerequisites
+    for node_data in skill_nodes_data:
+        prereq_slugs = node_data['prerequisites']
+        resource_names = node_data['resources']
+        tool_names = node_data['tools']
+        cert_names = node_data['certifications']
+        learning_resources = node_data.get('learning_resources', [])
+
+        # Create node with basic fields
+        node_defaults = {
+            'title': node_data['title'],
+            'description': node_data['description'],
+            'difficulty': node_data['difficulty'],
+            'estimated_hours': node_data['estimated_hours'],
+            'order': node_data['order'],
+            'learning_resources': learning_resources,
+        }
+
+        node, created = SkillNode.objects.get_or_create(
+            learning_path=node_data['learning_path'],
+            slug=node_data['slug'],
+            defaults=node_defaults
+        )
+        if created:
+            print(f"    Created skill: {node.title}")
+        else:
+            # Update existing node with learning_resources if it doesn't have them
+            if not node.learning_resources:
+                node.learning_resources = learning_resources
+                node.save()
+
+        node_objects[node_data['slug']] = node
+
+        # Link resources
+        for resource_name in resource_names:
+            try:
+                resource = Resource.objects.get(title=resource_name)
+                node.resources.add(resource)
+            except Resource.DoesNotExist:
+                pass
+
+        # Link tools
+        for tool_name in tool_names:
+            try:
+                tool = Tool.objects.get(name=tool_name)
+                node.tools.add(tool)
+            except Tool.DoesNotExist:
+                pass
+
+        # Link certifications
+        for cert_name in cert_names:
+            try:
+                cert = Certification.objects.get(name=cert_name)
+                node.certifications.add(cert)
+            except Certification.DoesNotExist:
+                pass
+
+    # Now link prerequisites
+    for node_data in skill_nodes_data:
+        node = node_objects[node_data['slug']]
+        for prereq_slug in node_data['prerequisites']:
+            if prereq_slug in node_objects:
+                prereq_node = node_objects[prereq_slug]
+                node.prerequisites.add(prereq_node)
+
+    print(f"✓ Learning paths seeded ({LearningPath.objects.count()} paths, {SkillNode.objects.count()} skills)\n")
+
+
 def main():
     """Run all seed functions"""
     print("\n" + "="*50)
@@ -1764,6 +2298,7 @@ def main():
         seed_resources()
         seed_tool_categories()
         seed_tools()
+        seed_learning_paths()
 
         print("="*50)
         print("✓ ALL DATA SEEDED SUCCESSFULLY!")

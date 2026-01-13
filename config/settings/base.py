@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'apps.resources',
     'apps.tools',
     'apps.cve',
+    'apps.learning_paths',
 ]
 
 MIDDLEWARE = [

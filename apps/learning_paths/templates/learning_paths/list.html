@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - CyberSec Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold mb-2">Cybersecurity Learning Paths</h1>
+        <p class="text-gray-400">Structured roadmaps to guide your cybersecurity learning journey</p>
+    </div>
+
+    <!-- Learning Paths Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% if paths %}
+            {% for path in paths %}
+            <div class="glass-effect rounded-lg p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="{{ path.icon }} text-cyber-cyan text-4xl"></i>
+                    <span class="text-xs px-3 py-1 bg-cyber-purple bg-opacity-20 text-purple-300 rounded-full">
+                        {{ path.difficulty }}
+                    </span>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-3">{{ path.name }}</h3>
+                <p class="text-gray-400 text-sm mb-4">{{ path.description|truncatewords:25 }}</p>
+
+                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-clock mr-2 text-cyber-cyan"></i>
+                        <span>~{{ path.estimated_hours }} hours</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-graduation-cap mr-2 text-cyber-cyan"></i>
+                        <span>{{ path.nodes.count }} skills</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'learning_paths:detail' path.slug %}"
+                   class="block w-full text-center bg-cyber-cyan hover:bg-opacity-80 text-cyber-dark font-semibold py-2 px-4 rounded transition">
+                    Start Learning
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="glass-effect rounded-lg p-12 text-center col-span-3">
+                <i class="fas fa-road text-6xl text-gray-600 mb-4"></i>
+                <p class="text-gray-400 text-lg">No learning paths available yet. Check back soon!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

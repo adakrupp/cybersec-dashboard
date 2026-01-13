@@ -12,6 +12,7 @@ urlpatterns = [
     path('resources/', include('apps.resources.urls')),
     path('tools/', include('apps.tools.urls')),
     path('cve/', include('apps.cve.urls')),
+    path('learning-paths/', include('apps.learning_paths.urls')),
 ]
 
 # Serve media files in development

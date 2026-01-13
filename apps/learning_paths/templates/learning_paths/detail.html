@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - CyberSec Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center mb-4">
+            <a href="{% url 'learning_paths:list' %}" class="text-cyber-cyan hover:text-cyber-purple mr-4">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Learning Paths
+            </a>
+        </div>
+        <div class="flex items-start justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-2 flex items-center">
+                    <i class="{{ path.icon }} text-cyber-cyan mr-4"></i>
+                    {{ path.name }}
+                </h1>
+                <p class="text-gray-400">{{ path.description }}</p>
+            </div>
+            <div class="text-right">
+                <span class="inline-block px-4 py-2 bg-cyber-purple bg-opacity-20 text-purple-300 rounded-full text-sm">
+                    {{ path.difficulty }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="glass-effect rounded-lg p-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div>
+                <i class="fas fa-clock text-cyber-cyan text-2xl mb-2"></i>
+                <p class="text-gray-400 text-sm">Estimated Time</p>
+                <p class="text-white font-semibold">~{{ path.estimated_hours }} hours</p>
+            </div>
+            <div>
+                <i class="fas fa-graduation-cap text-cyber-cyan text-2xl mb-2"></i>
+                <p class="text-gray-400 text-sm">Total Skills</p>
+                <p class="text-white font-semibold">{{ nodes.count }} skills</p>
+            </div>
+            <div>
+                <i class="fas fa-layer-group text-cyber-cyan text-2xl mb-2"></i>
+                <p class="text-gray-400 text-sm">Difficulty Levels</p>
+                <p class="text-white font-semibold">Beginner to Advanced</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficulty Legend -->
+    <div class="glass-effect rounded-lg p-4 mb-8">
+        <h3 class="text-lg font-semibold mb-3">Difficulty Legend</h3>
+        <div class="flex flex-wrap gap-4">
+            <div class="flex items-center">
+                <div class="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
+                <span class="text-sm text-gray-400">Beginner</span>
+            </div>
+            <div class="flex items-center">
+                <div class="w-4 h-4 rounded-full bg-yellow-500 mr-2"></div>
+                <span class="text-sm text-gray-400">Intermediate</span>
+            </div>
+            <div class="flex items-center">
+                <div class="w-4 h-4 rounded-full bg-red-500 mr-2"></div>
+                <span class="text-sm text-gray-400">Advanced</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Tree -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-6">Skill Tree</h2>
+
+        {% regroup nodes by difficulty as difficulty_groups %}
+
+        {% for difficulty_group in difficulty_groups %}
+        <div class="mb-8">
+            <h3 class="text-xl font-semibold mb-4 flex items-center">
+                {% if difficulty_group.grouper == 'BEGINNER' %}
+                    <div class="w-4 h-4 rounded-full bg-green-500 mr-3"></div>
+                {% elif difficulty_group.grouper == 'INTERMEDIATE' %}
+                    <div class="w-4 h-4 rounded-full bg-yellow-500 mr-3"></div>
+                {% else %}
+                    <div class="w-4 h-4 rounded-full bg-red-500 mr-3"></div>
+                {% endif %}
+                {{ difficulty_group.grouper }}
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+                {% for node in difficulty_group.list %}
+                <div class="skill-node glass-effect rounded-lg p-5 card-hover cursor-pointer relative
+                    {% if node.difficulty == 'BEGINNER' %}border-l-4 border-green-500{% endif %}
+                    {% if node.difficulty == 'INTERMEDIATE' %}border-l-4 border-yellow-500{% endif %}
+                    {% if node.difficulty == 'ADVANCED' %}border-l-4 border-red-500{% endif %}"
+                     onclick="toggleSkillDetails({{ node.id }})"
+                     id="skill-node-{{ node.id }}">
+
+                    <h4 class="text-lg font-semibold mb-2">{{ node.title }}</h4>
+                    <p class="text-sm text-gray-400 mb-3">{{ node.description|truncatewords:15 }}</p>
+
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span><i class="fas fa-clock mr-1 text-cyber-cyan"></i>{{ node.estimated_hours }}h</span>
+                        {% if node.prerequisites.count > 0 %}
+                            <span><i class="fas fa-link mr-1 text-cyber-purple"></i>{{ node.prerequisites.count }} prereq</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Skill Details (Hidden by default) -->
+                    <div id="skill-details-{{ node.id }}" class="hidden mt-4 pt-4 border-t border-gray-700">
+                        {% if node.prerequisites.count > 0 %}
+                        <div class="mb-3">
+                            <p class="text-xs text-cyber-cyan font-semibold mb-2">Prerequisites:</p>
+                            <ul class="text-xs text-gray-400 list-disc list-inside">
+                                {% for prereq in node.prerequisites.all %}
+                                <li>{{ prereq.title }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if node.learning_resources %}
+                        <div class="mb-3">
+                            <p class="text-xs text-cyber-cyan font-semibold mb-2">📚 Study Materials:</p>
+                            <ul class="text-xs space-y-2">
+                                {% for resource in node.learning_resources %}
+                                <li class="bg-cyber-dark bg-opacity-50 p-2 rounded">
+                                    <a href="{{ resource.url }}" target="_blank" class="text-white hover:text-cyber-cyan font-medium">
+                                        {% if resource.type == 'course' %}
+                                            <i class="fas fa-graduation-cap mr-1"></i>
+                                        {% elif resource.type == 'video' %}
+                                            <i class="fas fa-video mr-1"></i>
+                                        {% elif resource.type == 'book' %}
+                                            <i class="fas fa-book mr-1"></i>
+                                        {% elif resource.type == 'tutorial' %}
+                                            <i class="fas fa-chalkboard-teacher mr-1"></i>
+                                        {% elif resource.type == 'documentation' %}
+                                            <i class="fas fa-file-alt mr-1"></i>
+                                        {% else %}
+                                            <i class="fas fa-link mr-1"></i>
+                                        {% endif %}
+                                        {{ resource.title }}
+                                    </a>
+                                    <span class="inline-block ml-2 px-2 py-0.5 bg-cyber-purple bg-opacity-30 text-purple-300 rounded text-xs">{{ resource.type }}</span>
+                                    {% if resource.description %}
+                                    <p class="text-gray-500 text-xs mt-1">{{ resource.description }}</p>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if node.resources.count > 0 %}
+                        <div class="mb-3">
+                            <p class="text-xs text-cyber-cyan font-semibold mb-2">Learning Resources ({{ node.resources.count }}):</p>
+                            <ul class="text-xs space-y-1">
+                                {% for resource in node.resources.all|slice:":3" %}
+                                <li>
+                                    <a href="{{ resource.url }}" target="_blank" class="text-gray-400 hover:text-cyber-cyan">
+                                        <i class="fas fa-external-link-alt mr-1"></i>{{ resource.title|truncatewords:5 }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                {% if node.resources.count > 3 %}
+                                <li class="text-gray-500">+ {{ node.resources.count|add:"-3" }} more</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if node.tools.count > 0 %}
+                        <div class="mb-3">
+                            <p class="text-xs text-cyber-cyan font-semibold mb-2">Practice Tools ({{ node.tools.count }}):</p>
+                            <ul class="text-xs space-y-1">
+                                {% for tool in node.tools.all|slice:":3" %}
+                                <li>
+                                    <a href="{{ tool.url }}" target="_blank" class="text-gray-400 hover:text-cyber-cyan">
+                                        <i class="fas fa-tools mr-1"></i>{{ tool.name }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                {% if node.tools.count > 3 %}
+                                <li class="text-gray-500">+ {{ node.tools.count|add:"-3" }} more</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if node.certifications.count > 0 %}
+                        <div>
+                            <p class="text-xs text-cyber-cyan font-semibold mb-2">Related Certifications:</p>
+                            <ul class="text-xs space-y-1">
+                                {% for cert in node.certifications.all %}
+                                <li>
+                                    <a href="{{ cert.official_url }}" target="_blank" class="text-gray-400 hover:text-cyber-cyan">
+                                        <i class="fas fa-certificate mr-1"></i>{{ cert.name }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function toggleSkillDetails(nodeId) {
+    const detailsEl = document.getElementById(`skill-details-${nodeId}`);
+    const nodeEl = document.getElementById(`skill-node-${nodeId}`);
+
+    if (detailsEl && nodeEl) {
+        const isExpanded = !detailsEl.classList.contains('hidden');
+
+        // Close all other expanded nodes first
+        document.querySelectorAll('.skill-node').forEach(node => {
+            node.classList.remove('ring-2', 'ring-cyber-cyan', 'shadow-lg', 'shadow-cyber-cyan/50');
+        });
+        document.querySelectorAll('[id^="skill-details-"]').forEach(details => {
+            details.classList.add('hidden');
+        });
+
+        // Toggle current node
+        if (!isExpanded) {
+            detailsEl.classList.remove('hidden');
+            nodeEl.classList.add('ring-2', 'ring-cyber-cyan', 'shadow-lg', 'shadow-cyber-cyan/50');
+        }
+    }
+}
+</script>
+
+<style>
+.skill-node {
+    transition: all 0.3s ease;
+}
+
+.skill-node:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}
